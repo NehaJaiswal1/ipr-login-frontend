@@ -1,6 +1,7 @@
 
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "./Login1.css";
@@ -26,8 +27,23 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+
 function Login1() {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    // Load saved email and password from localStorage when component mounts
+    const savedEmail = localStorage.getItem("savedEmail");
+    const savedPassword = localStorage.getItem("savedPassword");
+
+    if (savedEmail && savedPassword && rememberMe) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+    }
+  }, [rememberMe]);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -35,6 +51,35 @@ function Login1() {
     event.preventDefault();
   };
 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("https://login-signup-0dmg.onrender.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const responseData = await response.json();
+  
+      if (response.ok) {
+        // Login successful, you can handle the success here
+        console.log("Login successful");
+        if (rememberMe) {
+          localStorage.setItem("savedEmail", email);
+          localStorage.setItem("savedPassword", password);
+        }
+
+      } else {
+        // Login failed, log the error details
+        console.error("Login failed", responseData);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  
   
   return (
     <div className="section-div">
@@ -74,6 +119,8 @@ function Login1() {
               <Input
                 id="standard-adornment-email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton aria-label="envelop"></IconButton>
@@ -82,12 +129,12 @@ function Login1() {
               />
             </FormControl>
             <FormControl sx={{ m: 1, width: "35ch" }} variant="standard">
-              <InputLabel htmlFor="standard-adornment-password">
-                Password
-              </InputLabel>
+              <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
               <Input
                 id="standard-adornment-password"
                 type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -101,14 +148,21 @@ function Login1() {
                 }
               />
             </FormControl>
-            <Checkbox />
+            <Checkbox
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             Remember me
             <br />
-            <p className="div-p">forgot your password?</p>
+
+             <Link to="/forgotpassword" className="div-p">
+              Forgot your password?
+            </Link>
             <div className="div-button">
-              <Button
+            <Button
                 variant="contained"
-                sx={{ justifyContent: "center", m: 1, }}
+                sx={{ justifyContent: "center", m: 1 }}
+                onClick={handleLogin}
               >
                 LogIn
               </Button>
@@ -125,7 +179,10 @@ function Login1() {
               <FontAwesomeIcon icon={faTwitter} size="2x" style={{marginRight:'8px'}}/>
               <FontAwesomeIcon icon={faLinkedinIn} size="2x" style={{marginRight:'8px'}}/>
             </div>
-            <p className="div-p1" style={{marginTop:'10px', color:'blue'}} >Don't have account? Register Here</p>
+            {/* <Link to="/forgotpassword" className="div-p">
+              Forgot your password?
+             */}
+            <Link to='/signup' className="div-p1" >Don't have account? Register Here</Link>
           </Box>
         </CardContent>
       </Card>

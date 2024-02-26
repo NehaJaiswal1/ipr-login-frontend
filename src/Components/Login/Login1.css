@@ -25,15 +25,34 @@
    /* box-shadow:  15px 10px 5px 8px rgb(221, 34, 27); */
 }
 
-.div-p{
+/* .div-p{
     text-align:right;
     font-size: 1rem;
 }
 
-.div-p1{
-    text-align:center;
+
+   */
+
+   .div-p {
     font-size: 1rem;
-    /* color: blue; */
+    text-decoration: none;
+    color: blue;
+    cursor: pointer;
+    display: block;
+    text-align: right;
+    margin-right: 10px;
+  }
+  
+  
+.div-p1{
+    font-size: 1rem;
+    text-decoration: none;
+    color: blue;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    /* margin-right: 10px; */
 }
 
 .div-fontawesome{
